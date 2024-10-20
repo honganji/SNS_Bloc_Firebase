@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "849376341106",
+    "project_id": "sns-bloc-firebase",
+    "storage_bucket": "sns-bloc-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849376341106:android:209aa9aca332eb2ac726eb",
+        "android_client_info": {
+          "package_name": "app.yuji.sns"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmGHyt9ujSLz6Redn41Fo2ljrYmBsulgs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
