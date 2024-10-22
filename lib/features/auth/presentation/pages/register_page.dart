@@ -13,15 +13,14 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sns_bloc_firebase/features/auth/presentation/components/my_button.dart';
 import 'package:sns_bloc_firebase/features/auth/presentation/components/my_text_field.dart';
+import 'package:sns_bloc_firebase/features/auth/presentation/cubits/auth_cubit.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? togglePages;
-  const RegisterPage({
-    super.key,
-    required this.togglePages
-  });
+  const RegisterPage({super.key, required this.togglePages});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -32,6 +31,36 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final pwController = TextEditingController();
   final confirmPwController = TextEditingController();
+  void register() {
+    final String name = nameController.text;
+    final String email = emailController.text;
+    final String pw = pwController.text;
+    final String confirmPw = confirmPwController.text;
+
+    final authCubit = context.read<AuthCubit>();
+
+    if (email.isNotEmpty &&
+        name.isNotEmpty &&
+        pw.isNotEmpty &&
+        confirmPw.isNotEmpty) {
+      if (pw == confirmPw) {
+        authCubit.register(name, email, pw);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Passwords do not match!!")));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    pwController.dispose();
+    confirmPwController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,37 +80,31 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   "Let's create an account for you!",
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary, fontSize: 16),
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 16),
                 ),
                 const SizedBox(height: 25),
                 MyTextField(
-                  controller: nameController,
-                  hintText: "Name",
-                  obscureText: false
-                ),
+                    controller: nameController,
+                    hintText: "Name",
+                    obscureText: false),
                 const SizedBox(height: 25),
                 MyTextField(
-                  controller: emailController,
-                  hintText: "Email",
-                  obscureText: false
-                ),
+                    controller: emailController,
+                    hintText: "Email",
+                    obscureText: false),
                 const SizedBox(height: 25),
                 MyTextField(
-                  controller: pwController,
-                  hintText: "Password",
-                  obscureText: true
-                ),
+                    controller: pwController,
+                    hintText: "Password",
+                    obscureText: true),
                 const SizedBox(height: 25),
                 MyTextField(
-                  controller: confirmPwController,
-                  hintText: "Confirm Password",
-                  obscureText: true
-                ),
+                    controller: confirmPwController,
+                    hintText: "Confirm Password",
+                    obscureText: true),
                 const SizedBox(height: 25),
-                MyButton(
-                  onTap: (){},
-                  text: "Register"
-                ),
+                MyButton(onTap: register, text: "Register"),
                 const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -96,9 +119,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Text(
                         "Login now",
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                          fontWeight: FontWeight.bold
-                        ),
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
