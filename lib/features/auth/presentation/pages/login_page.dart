@@ -37,6 +37,9 @@ class _LoginPageState extends State<LoginPage> {
     final authCubit = context.read<AuthCubit>();
     if (email.isNotEmpty && pw.isNotEmpty) {
       authCubit.login(email, pw);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Please enter both email and password")));
     }
   }
 
@@ -80,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: "Password",
                     obscureText: true),
                 const SizedBox(height: 25),
-                MyButton(onTap: () {}, text: "Login"),
+                MyButton(onTap: login, text: "Login"),
                 const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
