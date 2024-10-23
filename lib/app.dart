@@ -7,6 +7,7 @@ import 'package:sns_bloc_firebase/features/auth/presentation/pages/auth_page.dar
 import 'package:sns_bloc_firebase/features/home/presentation/pages/home_page.dart';
 import 'package:sns_bloc_firebase/features/profile/data/firebase_profile_repo.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:sns_bloc_firebase/features/storage/data/firebase_storage_repo.dart';
 import 'package:sns_bloc_firebase/themes/light_mode.dart';
 
 /*
@@ -28,8 +29,9 @@ import 'package:sns_bloc_firebase/themes/light_mode.dart';
 */
 
 class MainApp extends StatelessWidget {
-  final authRepo = FirebaseAuthRepo();
-  final profileRepo = FirebaseProfileRepo();
+  final firebaseAuthRepo = FirebaseAuthRepo();
+  final firebaseProfileRepo = FirebaseProfileRepo();
+  final firebaseStorageRepo = FirebaseStorageRepo();
   MainApp({super.key});
 
   @override
@@ -40,39 +42,41 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(
-          create: (context) => AuthCubit(authRepo: authRepo)..checkAuth(),
+          create: (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
         ),
         BlocProvider<ProfileCubit>(
-          create: (context) => ProfileCubit(profileRepo: profileRepo),
+          create: (context) => ProfileCubit(
+            profileRepo: firebaseProfileRepo,
+            storageRepo: firebaseStorageRepo,
+          ),
         ),
       ],
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: lightMode,
-          home:
-              BlocConsumer<AuthCubit, AuthState>(builder: (context, authState) {
-            // TODO remove
-            print(authState);
-            if (authState is Unauthenticated) {
-              return const AuthPage();
-            }
+        debugShowCheckedModeBanner: false,
+        theme: lightMode,
+        home: BlocConsumer<AuthCubit, AuthState>(builder: (context, authState) {
+          // TODO remove
+          print(authState);
+          if (authState is Unauthenticated) {
+            return const AuthPage();
+          }
 
-            if (authState is Authenticated) {
-              return const HomePage();
-            } else {
-              return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          }, listener: (context, state) {
-            if (state is AuthError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
-            }
-          }),
-        ),
+          if (authState is Authenticated) {
+            return const HomePage();
+          } else {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        }, listener: (context, state) {
+          if (state is AuthError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
+          }
+        }),
+      ),
     );
   }
 }

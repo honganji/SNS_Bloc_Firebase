@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sns_bloc_firebase/features/auth/domain/entities/app_user.dart';
@@ -50,17 +51,27 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
                 const SizedBox(height: 24,),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(12)
+                CachedNetworkImage(
+                  imageUrl: user.profileImageUrl,
+                  placeholder: (context, url) => 
+                    const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.person,
+                    size: 72,
+                    color: Theme.of(context).colorScheme.primary
                   ),
-                  height: 120,
-                  width: 120,
-                  padding: const EdgeInsets.all(24),
-                  child: const Center(
-                    child: Icon(Icons.person, size: 72,),
-                  ),
+                  imageBuilder: (context, imageProvider) => 
+                    Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover
+                        )
+                      ),
+                    )
                 ),
                 const SizedBox(height: 24,),
                 Padding(
