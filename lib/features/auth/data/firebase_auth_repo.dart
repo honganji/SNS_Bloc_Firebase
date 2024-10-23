@@ -31,7 +31,7 @@ class FirebaseAuthRepo implements AuthRepo {
           .createUserWithEmailAndPassword(email: email, password: password);
       AppUser user =
           AppUser(uid: userCredential.user!.uid, email: email, name: name);
-      await firebaseFirestore.collection("user").doc(user.uid).set(user.toJson());
+      await firebaseFirestore.collection("users").doc(user.uid).set(user.toJson());
 
       return (user);
     } catch (e) {
