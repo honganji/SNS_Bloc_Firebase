@@ -5,6 +5,7 @@ import 'package:sns_bloc_firebase/features/post/presentation/components/post_til
 import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_cubit.dart';
 import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_states.dart';
 import 'package:sns_bloc_firebase/features/post/presentation/pages/upload_post_page.dart';
+import 'package:sns_bloc_firebase/features/responsive/constrained_scaffold.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ConstrainedScaffold(
       appBar: AppBar(
         title: const Text("Home"),
         actions: [

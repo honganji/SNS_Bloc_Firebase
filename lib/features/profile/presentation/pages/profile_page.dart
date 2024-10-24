@@ -13,6 +13,7 @@ import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_c
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_states.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/pages/follower_page.dart';
+import 'package:sns_bloc_firebase/features/responsive/constrained_scaffold.dart';
 
 class ProfilePage extends StatefulWidget {
   final String uid;
@@ -66,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, state) {
         if (state is ProfileLoaded) {
           final user = state.profileUser;
-          return Scaffold(
+          return ConstrainedScaffold(
             appBar: AppBar(
               title: Text(user.name),
               foregroundColor: Theme.of(context).colorScheme.primary,
@@ -170,7 +171,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         .toList();
 
                     postCount = userPosts.length;
-
                     return ListView.builder(
                         itemCount: postCount,
                         physics: const NeverScrollableScrollPhysics(),

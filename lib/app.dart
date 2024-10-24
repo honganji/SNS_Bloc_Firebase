@@ -9,8 +9,12 @@ import 'package:sns_bloc_firebase/features/post/data/firebase_post_repo.dart';
 import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_cubit.dart';
 import 'package:sns_bloc_firebase/features/profile/data/firebase_profile_repo.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_cubit.dart';
+import 'package:sns_bloc_firebase/features/search/firebase_search_repo.dart';
+import 'package:sns_bloc_firebase/features/search/presentation/cubits/search_cubit.dart';
 import 'package:sns_bloc_firebase/features/storage/data/firebase_storage_repo.dart';
+import 'package:sns_bloc_firebase/themes/dark_mode.dart';
 import 'package:sns_bloc_firebase/themes/light_mode.dart';
+import 'package:sns_bloc_firebase/themes/theme_cubit.dart';
 
 /*
   APP - Root Level
@@ -35,6 +39,7 @@ class MainApp extends StatelessWidget {
   final firebaseProfileRepo = FirebaseProfileRepo();
   final firebaseStorageRepo = FirebaseStorageRepo();
   final firebasePostRepo = FirebasePostRepo();
+  final firebaseSearchRepo = FirebaseSearchRepo();
   MainApp({super.key});
 
   @override
@@ -60,32 +65,39 @@ class MainApp extends StatelessWidget {
             storageRepo: firebaseStorageRepo,
           ),
         ),
+        BlocProvider<SearchCubit>(
+          create: (context) => SearchCubit(searchRepo: firebaseSearchRepo),
+        ),
+        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: lightMode,
-        home: BlocConsumer<AuthCubit, AuthState>(builder: (context, authState) {
-          // TODO remove
-          print(authState);
-          if (authState is Unauthenticated) {
-            return const AuthPage();
-          }
+      child: BlocBuilder<ThemeCubit, ThemeData>(
+        builder: (context, currentTheme) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: currentTheme,
+          home:
+              BlocConsumer<AuthCubit, AuthState>(builder: (context, authState) {
+            // TODO remove
+            print(authState);
+            if (authState is Unauthenticated) {
+              return const AuthPage();
+            }
 
-          if (authState is Authenticated) {
-            return const HomePage();
-          } else {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-        }, listener: (context, state) {
-          if (state is AuthError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          }
-        }),
+            if (authState is Authenticated) {
+              return const HomePage();
+            } else {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+          }, listener: (context, state) {
+            if (state is AuthError) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          }),
+        ),
       ),
     );
   }
