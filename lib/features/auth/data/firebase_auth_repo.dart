@@ -13,8 +13,12 @@ class FirebaseAuthRepo implements AuthRepo {
       //attempt sign in
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
-      AppUser user =
-          AppUser(uid: userCredential.user!.uid, email: email, name: "");
+      DocumentSnapshot userDoc = await firebaseFirestore
+          .collection("users")
+          .doc(userCredential.user!.uid)
+          .get();
+      AppUser user = AppUser(
+          uid: userCredential.user!.uid, email: email, name: userDoc["name"]);
 
       return (user);
     } catch (e) {
@@ -31,7 +35,10 @@ class FirebaseAuthRepo implements AuthRepo {
           .createUserWithEmailAndPassword(email: email, password: password);
       AppUser user =
           AppUser(uid: userCredential.user!.uid, email: email, name: name);
-      await firebaseFirestore.collection("users").doc(user.uid).set(user.toJson());
+      await firebaseFirestore
+          .collection("users")
+          .doc(user.uid)
+          .set(user.toJson());
 
       return (user);
     } catch (e) {
@@ -51,6 +58,13 @@ class FirebaseAuthRepo implements AuthRepo {
       return null;
     }
 
-    return AppUser(uid: firebaseUser.uid, email: firebaseUser.email!, name: "");
+    DocumentSnapshot userDoc =
+        await firebaseFirestore.collection("users").doc(firebaseUser.uid).get();
+
+    return AppUser(
+      uid: firebaseUser.uid,
+      email: firebaseUser.email!,
+      name: userDoc["name"]
+    );
   }
 }
