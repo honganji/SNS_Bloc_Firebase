@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sns_bloc_firebase/features/profile/domain/entities/profile_user.dart';
 import 'package:sns_bloc_firebase/features/profile/domain/repos/profile_repo.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_states.dart';
 import 'package:sns_bloc_firebase/features/storage/domain/storage_repo.dart';
@@ -25,6 +26,11 @@ class ProfileCubit extends Cubit<ProfileStates> {
     } catch (e) {
       emit(ProfileError(e.toString()));
     }
+  }
+
+  Future<ProfileUser?> getUserProfile(String uid) async {
+    final user = await profileRepo.fetchUserProfile(uid);
+    return user;
   }
 
   // update bio and / or profile picture
@@ -55,15 +61,22 @@ class ProfileCubit extends Cubit<ProfileStates> {
         }
       }
 
-      final updatedProfile =
-          currentUser.copyWith(
-            newBio: bio ?? currentUser.bio,
-            newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl
-          );
+      final updatedProfile = currentUser.copyWith(
+          newBio: bio ?? currentUser.bio,
+          newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl);
       await profileRepo.updateProfile(updatedProfile);
       await fetchUserProfile(uid);
     } catch (e) {
       emit(ProfileError("Error updating profile: $e"));
+    }
+  }
+
+  // toggle follow/unfollow
+  Future<void> toggleFollow(String currentUid, String targetUid) async {
+    try {
+      await profileRepo.toggleFollow(currentUid, targetUid);
+    } catch (e) {
+      emit(ProfileError("Error toggling follow: $e"));
     }
   }
 }

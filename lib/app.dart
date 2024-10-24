@@ -5,6 +5,8 @@ import 'package:sns_bloc_firebase/features/auth/presentation/cubits/auth_cubit.d
 import 'package:sns_bloc_firebase/features/auth/presentation/cubits/auth_states.dart';
 import 'package:sns_bloc_firebase/features/auth/presentation/pages/auth_page.dart';
 import 'package:sns_bloc_firebase/features/home/presentation/pages/home_page.dart';
+import 'package:sns_bloc_firebase/features/post/data/firebase_post_repo.dart';
+import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_cubit.dart';
 import 'package:sns_bloc_firebase/features/profile/data/firebase_profile_repo.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:sns_bloc_firebase/features/storage/data/firebase_storage_repo.dart';
@@ -32,6 +34,7 @@ class MainApp extends StatelessWidget {
   final firebaseAuthRepo = FirebaseAuthRepo();
   final firebaseProfileRepo = FirebaseProfileRepo();
   final firebaseStorageRepo = FirebaseStorageRepo();
+  final firebasePostRepo = FirebasePostRepo();
   MainApp({super.key});
 
   @override
@@ -42,11 +45,18 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(
-          create: (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
+          create: (context) =>
+              AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
         ),
         BlocProvider<ProfileCubit>(
           create: (context) => ProfileCubit(
             profileRepo: firebaseProfileRepo,
+            storageRepo: firebaseStorageRepo,
+          ),
+        ),
+        BlocProvider<PostCubit>(
+          create: (context) => PostCubit(
+            postRepo: firebasePostRepo,
             storageRepo: firebaseStorageRepo,
           ),
         ),
