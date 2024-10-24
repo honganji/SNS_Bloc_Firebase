@@ -10,6 +10,7 @@ import 'package:sns_bloc_firebase/features/auth/presentation/cubits/auth_cubit.d
 import 'package:sns_bloc_firebase/features/post/domain/entities/post.dart';
 import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_cubit.dart';
 import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_states.dart';
+import 'package:sns_bloc_firebase/features/responsive/constrained_scaffold.dart';
 
 class UploadPostPage extends StatefulWidget {
   const UploadPostPage({super.key});
@@ -105,7 +106,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
   }
 
   Widget buildUploadPage() {
-    return Scaffold(
+    return ConstrainedScaffold(
       appBar: AppBar(
         title: const Text("Create Post"),
         foregroundColor: Theme.of(context).colorScheme.primary,

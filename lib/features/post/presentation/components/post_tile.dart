@@ -164,7 +164,8 @@ class _PostTileState extends State<PostTile> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  postUser?.profileImageUrl != null
+                  postUser?.profileImageUrl != null &&
+                          postUser!.profileImageUrl.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: postUser!.profileImageUrl,
                           errorWidget: (context, url, error) =>
@@ -173,9 +174,12 @@ class _PostTileState extends State<PostTile> {
                             height: 40,
                             width: 40,
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.cover)),
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         )
                       : const Icon(Icons.person),

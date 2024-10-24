@@ -9,6 +9,7 @@ import 'package:sns_bloc_firebase/features/auth/presentation/components/my_text_
 import 'package:sns_bloc_firebase/features/profile/domain/entities/profile_user.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_states.dart';
+import 'package:sns_bloc_firebase/features/responsive/constrained_scaffold.dart';
 
 class EditProfilePage extends StatefulWidget {
   final ProfileUser profileUser;
@@ -59,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileStates>(builder: (context, state) {
       if (state is ProfileLoading) {
-        return const Scaffold(
+        return const ConstrainedScaffold(
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
