@@ -38,11 +38,23 @@ class FirebaseStorageRepo implements StorageRepo {
   ) async {
     try {
       final file = File(path);
-      final storageRef = firebaseStorage.ref().child('$folder/$fileName');
+      final fileSize = await file.length();
+      print('File size: $fileSize bytes');
+      print('file name: $fileName');
+      final storageRef = firebaseStorage.ref().child('$folder/${DateTime.now().millisecondsSinceEpoch.toString()}');
+      // final storageRef = firebaseStorage.ref().child('$folder/$fileName');
       final uploadTask = await storageRef.putFile(file);
       final downloadUrl = await uploadTask.ref.getDownloadURL();
       return downloadUrl;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      if (e is FirebaseException) {
+        print("FirebaseException: ${e.message}");
+        print("Error code: ${e.code}");
+        print("Stack trace: $stackTrace");
+      } else {
+        print("Unknown error: $e");
+        print("Stack trace: $stackTrace");
+      }
       return null;
     }
   }

@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -46,9 +47,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCwXJ0zNecArglN9eK2-rTBOsaZTjAurKk',
-    appId: '1:849376341106:web:a661523e780a7668c726eb',
+  static FirebaseOptions web = FirebaseOptions(
+    apiKey: dotenv.env["FIREBASE_WEB_API_KEY"] ?? "",
+    appId: dotenv.env["FIREBASE_WEB_PROJECT_ID"] ?? "",
     messagingSenderId: '849376341106',
     projectId: 'sns-bloc-firebase',
     authDomain: 'sns-bloc-firebase.firebaseapp.com',
@@ -56,17 +57,17 @@ class DefaultFirebaseOptions {
     measurementId: 'G-M10MP0VMDQ',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCmGHyt9ujSLz6Redn41Fo2ljrYmBsulgs',
-    appId: '1:849376341106:android:209aa9aca332eb2ac726eb',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env["FIREBASE_ANDROID_API_KEY"] ?? "",
+    appId: dotenv.env["FIREBASE_ANDROID_PROJECT_ID"] ?? "",
     messagingSenderId: '849376341106',
     projectId: 'sns-bloc-firebase',
     storageBucket: 'sns-bloc-firebase.appspot.com',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD7WapHW5nQ83bXcRXRcKFx6kToWYG1lTE',
-    appId: '1:849376341106:ios:8b76c9a7e34f31e3c726eb',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env["FIREBASE_IOS_API_KEY"] ?? "",
+    appId: dotenv.env["FIREBASE_IOS_PROJECT_ID"] ?? "",
     messagingSenderId: '849376341106',
     projectId: 'sns-bloc-firebase',
     storageBucket: 'sns-bloc-firebase.appspot.com',

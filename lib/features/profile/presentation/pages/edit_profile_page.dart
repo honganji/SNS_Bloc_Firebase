@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sns_bloc_firebase/features/auth/presentation/components/my_text_field.dart';
+import 'package:sns_bloc_firebase/features/post/presentation/cubits/post_cubit.dart';
 import 'package:sns_bloc_firebase/features/profile/domain/entities/profile_user.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:sns_bloc_firebase/features/profile/presentation/cubits/profile_states.dart';
@@ -41,18 +42,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   void uploadProfile() async {
     final profileCubit = context.read<ProfileCubit>();
+    // final postCubit = context.read<PostCubit>();
     final String uid = widget.profileUser.uid;
     final imageMobilePath = kIsWeb ? null : imagePickedFile?.path;
     final imageWebBytes = kIsWeb ? imagePickedFile?.bytes : null;
     final String? newBio =
         bioTextController.text.isNotEmpty ? bioTextController.text : null;
     if (imagePickedFile != null || newBio != null) {
+      // TODO remove
+      print(imageMobilePath);
       profileCubit.updateProfile(
         uid: uid,
         bio: newBio,
         imageMobilePath: imageMobilePath,
-        imageWebBytes: imageWebBytes
+        imageWebBytes: imageWebBytes,
       );
+      // postCubit.fetchAllPosts();
     }
   }
 
@@ -77,6 +82,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }, listener: (context, state) {
       if (state is ProfileLoaded) {
         Navigator.pop(context);
+      } else if (state is ProfileError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.message),
+          ),
+        );
       }
     });
   }
@@ -96,39 +107,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
           children: [
             Center(
               child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  shape: BoxShape.circle,
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: (!kIsWeb && imagePickedFile != null)
-                  ? Image.file(
-                      File(imagePickedFile!.path!),
-                      fit: BoxFit.cover
-                    )
-                  :
-                  (kIsWeb && webImage != null)
-                    ? Image.memory(webImage!)
-                    :
-                    CachedNetworkImage(
-                      imageUrl: widget.profileUser.profileImageUrl,
-                      placeholder: (context, url) => 
-                        const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(
-                        Icons.person,
-                        size: 72,
-                        color: Theme.of(context).colorScheme.primary
-                      ),
-                      imageBuilder: (context, imageProvider) => 
-                        Image(
-                          image: imageProvider,
-                          fit: BoxFit.cover,),
-                    )
-              ),
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: (!kIsWeb && imagePickedFile != null)
+                      ? Image.file(File(imagePickedFile!.path!),
+                          fit: BoxFit.cover)
+                      : (kIsWeb && webImage != null)
+                          ? Image.memory(webImage!)
+                          : CachedNetworkImage(
+                              imageUrl: widget.profileUser.profileImageUrl,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => Icon(
+                                  Icons.person,
+                                  size: 72,
+                                  color: Theme.of(context).colorScheme.primary),
+                              imageBuilder: (context, imageProvider) => Image(
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            )),
             ),
-            const SizedBox(height: 24,),
+            const SizedBox(
+              height: 24,
+            ),
             Center(
               child: MaterialButton(
                 onPressed: pickImage,
