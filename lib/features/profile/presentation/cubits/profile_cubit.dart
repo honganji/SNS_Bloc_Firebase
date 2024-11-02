@@ -40,6 +40,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
       Uint8List? imageWebBytes,
       String? imageMobilePath}) async {
     try {
+      emit(ProfileLoading());
       final currentUser = await profileRepo.fetchUserProfile(uid);
       if (currentUser == null) {
         emit(ProfileError("Failed to fetch user for profile update"));
@@ -48,22 +49,25 @@ class ProfileCubit extends Cubit<ProfileStates> {
 
       String? imageDownloadUrl;
       if (imageWebBytes != null || imageMobilePath != null) {
+        // TODO remove
+        print(imageMobilePath);
         if (imageMobilePath != null) {
-          imageDownloadUrl =
-              await storageRepo.uploadProfileImageMobile(imageMobilePath, uid);
+          imageDownloadUrl = await storageRepo.uploadProfileImageMobile(
+              imageMobilePath,
+              DateTime.now().millisecondsSinceEpoch.toString());
         } else if (imageWebBytes != null) {
-          imageDownloadUrl =
-              await storageRepo.uploadProfileImageWeb(imageWebBytes, uid);
+          imageDownloadUrl = await storageRepo.uploadProfileImageWeb(
+              imageWebBytes, DateTime.now().millisecondsSinceEpoch.toString());
         }
         if (imageDownloadUrl == null) {
           emit(ProfileError("Failed to upload image"));
           return;
         }
       }
-
       final updatedProfile = currentUser.copyWith(
-          newBio: bio ?? currentUser.bio,
-          newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl);
+        newBio: bio ?? currentUser.bio,
+        newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl,
+      );
       await profileRepo.updateProfile(updatedProfile);
       await fetchUserProfile(uid);
     } catch (e) {
